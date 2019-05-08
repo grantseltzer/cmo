@@ -19,6 +19,9 @@ func main() {
 
 	var opts cmoOptions
 	err := parseConfigurationOptions(&opts)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "%s\n", err.Error()) //FIXME: put behind verbose flag
+	}
 
 	rootCmd := &cobra.Command{
 		Use:                "cmo [command and args]",
