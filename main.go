@@ -5,22 +5,17 @@ import (
 	"os"
 	"os/exec"
 
-	"github.com/fatih/color"
 	"github.com/spf13/cobra"
 )
-
-type cmoOptions struct {
-	outColor      color.Attribute
-	errColor      color.Attribute
-	combineOutput bool
-}
 
 func main() {
 
 	var opts cmoOptions
 	err := parseConfigurationOptions(&opts)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "%s\n", err.Error()) //FIXME: put behind verbose flag
+		if opts.verbose {
+			fmt.Fprintf(os.Stderr, "%s\n", err.Error())
+		}
 	}
 
 	rootCmd := &cobra.Command{
@@ -30,6 +25,11 @@ func main() {
 		RunE: func(cmd *cobra.Command, args []string) error {
 			return opts.run(args)
 		},
+	}
+
+	if os.Args[1] == "-h" || os.Args[1] == "--help" {
+		rootCmd.Help()
+		os.Exit(0)
 	}
 
 	err = rootCmd.Execute()
@@ -43,6 +43,14 @@ func (c cmoOptions) run(args []string) error {
 	cmd := exec.Command(args[0], args[1:]...)
 	cmd.Stdout = newDirectWriter(c.outColor)
 	cmd.Stderr = newDirectWriter(c.errColor)
+
+	//TODO:
+	// Add ability to "combine output", meaning stderr would also
+	// be printed to stdout except with its own color. Need to have
+	// a multi-writer with which multiple writers can call their
+	// own write methods which create a formatted (colored) string
+	// and write to an underlying writer for stdout
+	//
 
 	return cmd.Run()
 }
