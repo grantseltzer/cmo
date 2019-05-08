@@ -3,43 +3,43 @@ package main
 import (
 	"fmt"
 	"os"
+	"os/exec"
 
-	"github.com/spf13/viper"
-
+	"github.com/fatih/color"
 	"github.com/spf13/cobra"
 )
 
 type cmoOptions struct {
-	outColor      string
-	errColor      string
+	outColor      color.Attribute
+	errColor      color.Attribute
 	combineOutput bool
 }
 
 func main() {
 
 	var opts cmoOptions
+	err := parseConfigurationOptions(&opts)
 
 	rootCmd := &cobra.Command{
-		Use:   "cmo [command and args]",
-		Short: "color coordinates stdout/stderr of the command",
-		Run: func(cmd *cobra.Command, args []string) {
-
-			viper.SetEnvPrefix("CMO")
-			viper.SetDefault("STDERR_COLOR", "red")
-			viper.SetDefault("STDOUT_COLOR", "green")
-			viper.SetDefault("COMBINE_OUPUT", true)
-			viper.AutomaticEnv()
-
-			opts.run(args)
+		Use:                "cmo [command and args]",
+		Short:              "color coordinates stdout/stderr of the command",
+		DisableFlagParsing: true,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			return opts.run(args)
 		},
 	}
 
-	err := rootCmd.Execute()
+	err = rootCmd.Execute()
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "%s\n", err.Error())
 	}
 }
 
-func (c cmoOptions) run(args []string) {
+func (c cmoOptions) run(args []string) error {
 
+	cmd := exec.Command(args[0], args[1:]...)
+	cmd.Stdout = newDirectWriter(c.outColor)
+	cmd.Stderr = newDirectWriter(c.errColor)
+
+	return cmd.Run()
 }
