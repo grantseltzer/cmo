@@ -41,16 +41,15 @@ func main() {
 func (c cmoOptions) run(args []string) error {
 
 	cmd := exec.Command(args[0], args[1:]...)
-	cmd.Stdout = newDirectWriter(c.outColor)
-	cmd.Stderr = newDirectWriter(c.errColor)
+	cmd.Stdout = newDirectWriter(os.Stdout, c.outColor)
 
-	//TODO:
-	// Add ability to "combine output", meaning stderr would also
-	// be printed to stdout except with its own color. Need to have
-	// a multi-writer with which multiple writers can call their
-	// own write methods which create a formatted (colored) string
-	// and write to an underlying writer for stdout
-	//
+	// whether or not to print stderr to stdout
+	// to make pipes worth. Still color coded.
+	if c.combineOutput {
+		cmd.Stderr = newDirectWriter(os.Stdout, c.errColor)
+	} else {
+		cmd.Stderr = newDirectWriter(os.Stderr, c.errColor)
+	}
 
 	return cmd.Run()
 }
