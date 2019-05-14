@@ -27,6 +27,10 @@ func main() {
 		},
 	}
 
+	if len(os.Args) < 2 {
+		os.Exit(0)
+	}
+
 	if os.Args[1] == "-h" || os.Args[1] == "--help" {
 		rootCmd.Help()
 		os.Exit(0)
