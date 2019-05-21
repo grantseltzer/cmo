@@ -13,6 +13,10 @@ cmo color-code the stdout/stderr of the command that's passed after it. These co
 
 Your color options are: red, blue, green, yellow, cyan, black
 
+<p align="center">
+  <img src="/example.png">
+</p>
+
 Enjoy, feel free to make an issue for bugs, or feature requests
 
 <p align="center">
