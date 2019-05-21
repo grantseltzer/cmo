@@ -7,9 +7,11 @@ cmo color-code the stdout/stderr of the command that's passed after it. These co
 
 `CMO_STDERR_COLOR` (default: red)
 
-Your options are: red, blue, green, yellow, cyan, black
+`CMO_COMBINE_OUTPUT` (default: false) - print both stdout and stderr to stdout 
 
-Also you can specify `CMO_VERBOSE` to be true.
+`CMO_VERBOSE` (default: false)
+
+Your color options are: red, blue, green, yellow, cyan, black
 
 Enjoy, feel free to make an issue for bugs, or feature requests
 
